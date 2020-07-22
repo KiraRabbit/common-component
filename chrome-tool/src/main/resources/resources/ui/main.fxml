@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="898.0" xmlns="http://javafx.com/javafx/8.0.172-ea"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.guuidea.component.chrome.tool.ui.MainLayoutController">
+    <children>
+        <MenuBar layoutX="9.0" layoutY="14.0" prefHeight="29.0" prefWidth="583.0" AnchorPane.leftAnchor="0.0"
+                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="%ACCOUNT">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleNewAccount" text="%NEW_ACCOUNT"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%PROXY">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleNewProxy" text="%NEW_PROXY"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleFileChoice" text="%IMPORT_PROXY"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="%HELP">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="%ABOUT"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
+                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+            <tabs>
+                <Tab closable="false" text="%ACCOUNT">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="167.0" prefWidth="513.0">
+                            <children>
+                                <TableView fx:id="googleAccountTable" prefHeight="200.0" prefWidth="200.0"
+                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columns>
+                                        <TableColumn fx:id="gUserNameCol" prefWidth="181.0" sortable="false" text="账号"/>
+                                        <TableColumn fx:id="gPreIpCol" prefWidth="140.0" sortable="false"
+                                                     text="上次IP地址"/>
+                                        <TableColumn fx:id="gLastLoiginAtCol" prefWidth="159.0" sortable="false"
+                                                     text="最近登录时间"/>
+                                        <TableColumn fx:id="gCheckIpCol" prefWidth="88.0" sortable="false" text="校验IP"/>
+                                        <TableColumn fx:id="gPrxoyNameCol" prefWidth="173.0" sortable="false"
+                                                     text="代理"/>
+                                        <TableColumn fx:id="gOptCol" prefWidth="155.0" sortable="false" text="操作"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="%PROXY">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="315.0" prefWidth="600.0">
+                            <children>
+                                <TableView fx:id="proxyAccountTable" prefHeight="200.0" prefWidth="200.0"
+                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <columns>
+                                        <TableColumn fx:id="pServerName" prefWidth="207.0" sortable="false" text="名称"/>
+                                        <TableColumn fx:id="pServerAddrCol" prefWidth="117.0" sortable="false"
+                                                     text="服务器地址"/>
+                                        <TableColumn fx:id="pServerPortCol" prefWidth="105.0" sortable="false"
+                                                     text="服务器端口"/>
+                                        <TableColumn fx:id="pProxyMethodCol" prefWidth="119.0" sortable="false"
+                                                     text="加密方式"/>
+                                        <TableColumn fx:id="pProxyTypeCol" prefWidth="114.0" sortable="false"
+                                                     text="代理方式"/>
+                                        <TableColumn fx:id="pLocalPortCol" prefWidth="111.0" sortable="false"
+                                                     text="本地端口"/>
+                                        <TableColumn fx:id="pOptCol" prefWidth="196.0" sortable="false" text="操作"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </children>
+</AnchorPane>
