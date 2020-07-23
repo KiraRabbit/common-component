@@ -2,8 +2,8 @@
 /.idea/workspace.xml
 /.idea/
 /target/
-/ip/target/
-/log/target/
-/rate-limit/target/
-/secrecy/target/
 /logs/
+/guuidea-component-ip/target/
+/guuidea-component-log/target/
+/guuidea-component-rate-limit/target/
+/guuidea-component-secrecy/target/
