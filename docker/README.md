@@ -11,6 +11,8 @@
 - [x] 容器重启
 - [x] 容器清除
 
+接口文档见[文档中心](http://190.1.1.40:8088/docs/technology/technology-1c9252i2lkae7)
+
 ## 环境依赖
 - jdk8
 - retrofit2
@@ -106,9 +108,9 @@ mvn deploy -f pom.xml -Dmaven.test.skip=true
 
 ```shell script
 <dependency>
-  <groupId>com.guuidea.api</groupId>
-  <artifactId>docker</artifactId>
-  <version>${version}</version>
+  <groupId>com.guuidea.component</groupId>
+  <artifactId>docker-api</artifactId>
+  <version>1.2.0-SNAPSHOT</version>
 </dependency>
 ```
 

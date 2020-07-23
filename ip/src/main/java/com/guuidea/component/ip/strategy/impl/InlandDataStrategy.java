@@ -19,10 +19,6 @@ import java.util.List;
  * @Date: 2020/4/14
  */
 public class InlandDataStrategy implements DataStrategy {
-    private static String dbUrl = "jdbc:mysql://190.1.1.77:3310/joy_common?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT";
-    private static String dbDriver = "com.mysql.jdbc.Driver";
-    private static String dbUsername = "root";
-    private static String dbPassword = "123456";
 
     @Override
     public void load(List<IPProviderInfo> ipProviderInfos) throws SQLException, ClassNotFoundException{

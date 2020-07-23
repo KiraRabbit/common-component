@@ -24,11 +24,13 @@ public class Test {
         list.add(info);
         IPProvider.init(EnumUtil.DataSourceStrategyEnum.INLAND,EnumUtil.SearchTypeStrategyEnum.BINARY , list);
 
+        //将IP解析为数值
+        System.out.println(IPProvider.ip2Long("115.196.222.161"));
 
+        //根据数值查找对应地区信息
         IpRange i = IPProvider.search( 16910592L);
         System.out.println("i = " + i.getCityId());
 
-        System.out.println(IPProvider.ip2Long("115.196.222.161"));
     }
 
 

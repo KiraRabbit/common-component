@@ -74,7 +74,7 @@ public class DockerClient {
             params.put("name", names);
         }
         if (status != null && status.size() > 0) {
-            params.put("name", names);
+            params.put("status", status);
         }
         String filters = JSONObject.toJSONString(params);
         String result = ApiClientFactory.executeStringSync(dockerRemoteApi.containers(filters));
