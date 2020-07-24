@@ -9,12 +9,13 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
-        <module>log</module>
-        <module>ip</module>
-        <module>docker</module>
-        <module>secrecy</module>
-        <module>rate-limit</module>
-        <module>chrome-tool</module>
+        <module>guuidea-component-log</module>
+        <module>guuidea-component-ip</module>
+        <module>guuidea-component-docker</module>
+        <module>guuidea-component-secrecy</module>
+        <module>guuidea-component-rate-limit</module>
+        <module>guuidea-component-chrome-tool</module>
+        <module>guuidea-component-utils</module>
     </modules>
 
     <properties>
@@ -24,6 +25,7 @@
         <guuidea.component.secrecy.version>1.0.0-SNAPSHOT</guuidea.component.secrecy.version>
         <guuidea.component.rate-limit.version>1.0.0-SNAPSHOT</guuidea.component.rate-limit.version>
         <guuidea.component.chrome-tool.version>1.0.0-SNAPSHOT</guuidea.component.chrome-tool.version>
+        <guuidea.component.utils.version>1.0.0-SNAPSHOT</guuidea.component.utils.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>

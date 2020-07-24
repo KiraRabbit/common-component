@@ -108,6 +108,14 @@
             <version>${slf4j.version}</version>
         </dependency>
 
+        <!-- 自建工具类 -->
+        <dependency>
+            <groupId>com.guuidea.component</groupId>
+            <artifactId>utils</artifactId>
+            <version>${guuidea.component.utils.version}</version>
+        </dependency>
+
+
         <!-- logback -->
         <dependency>
             <groupId>ch.qos.logback</groupId>

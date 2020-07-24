@@ -1,6 +1,4 @@
-package com.guuidea.component.chrome.tool.common;
-
-import static com.guuidea.component.chrome.tool.common.Constant.EMPTY_STR;
+package com.guuidea.component.utils;
 
 import java.util.UUID;
 
@@ -21,6 +19,6 @@ public class UUIDUtils {
      * @return
      */
     public static String genUUID() {
-        return UUID.randomUUID().toString().replace("-", EMPTY_STR);
+        return UUID.randomUUID().toString().replace("-", "");
     }
 }

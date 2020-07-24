@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import com.guuidea.component.utils.IOUtils;
+
 /**
  * p12格式证书工具类.
  *

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.guuidea.component.log.unifyLog.model.NewHttpRequest;
 import com.guuidea.component.log.unifyLog.model.NewHttpResponse;
 import com.guuidea.component.log.utils.CollectionUtil;
-import com.guuidea.component.log.utils.StreamUtil;
+import com.guuidea.component.utils.StreamUtil;
 
 /**
  * 请求日志过滤器

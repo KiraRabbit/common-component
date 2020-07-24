@@ -2,8 +2,8 @@ package com.guuidea.component.chrome.tool.ui;
 
 import static com.guuidea.component.chrome.tool.common.Constant.EMPTY_STR;
 import static com.guuidea.component.chrome.tool.common.StageLoaderUtils.loadController;
-import static com.guuidea.component.chrome.tool.common.TimeFormatterUtils.formatYYYYMMddHHmmss;
 import static com.guuidea.component.chrome.tool.model.SystemConf.*;
+import static com.guuidea.component.utils.TimeFormatterUtils.formatYYYYMMddHHmmss;
 
 import java.io.File;
 import java.util.List;
@@ -19,7 +19,6 @@ import com.guuidea.component.chrome.tool.common.AlertUtils;
 import com.guuidea.component.chrome.tool.common.CollectionUtils;
 import com.guuidea.component.chrome.tool.common.StoreUtils;
 import com.guuidea.component.chrome.tool.common.StringUtils;
-import com.guuidea.component.chrome.tool.common.UUIDUtils;
 import com.guuidea.component.chrome.tool.libs.proxy.cryto.CryptFactory;
 import com.guuidea.component.chrome.tool.libs.proxy.network.proxy.IProxy;
 import com.guuidea.component.chrome.tool.listener.TaskStopListener;
@@ -33,6 +32,7 @@ import com.guuidea.component.chrome.tool.task.CheckIPTask;
 import com.guuidea.component.chrome.tool.task.ProxyTask;
 import com.guuidea.component.chrome.tool.task.SeleniumTask;
 import com.guuidea.component.chrome.tool.task.TaskChain;
+import com.guuidea.component.utils.UUIDUtils;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;

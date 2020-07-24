@@ -1,5 +1,5 @@
 
-package com.guuidea.component.chrome.tool.common;
+package com.guuidea.component.utils;
 
 
 

@@ -1,4 +1,4 @@
-package com.guuidea.component.chrome.tool.common;
+package com.guuidea.component.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

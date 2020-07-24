@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.guuidea.component.docker.exception.GuuideaDockerApiException;
 import com.guuidea.component.docker.interceptor.AuthenticationInterceptor;
-import com.guuidea.component.docker.utils.IOUtils;
+import com.guuidea.component.utils.IOUtils;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;

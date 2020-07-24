@@ -2,7 +2,7 @@ package com.guuidea.component.chrome.tool.ui;
 
 import static com.guuidea.component.chrome.tool.common.AlertUtils.showAlert;
 import static com.guuidea.component.chrome.tool.common.Constant.EMPTY_STR;
-import static com.guuidea.component.chrome.tool.common.UUIDUtils.genUUID;
+import static com.guuidea.component.utils.UUIDUtils.genUUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

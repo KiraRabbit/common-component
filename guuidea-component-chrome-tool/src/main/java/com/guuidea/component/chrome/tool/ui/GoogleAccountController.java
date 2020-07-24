@@ -5,11 +5,11 @@ import static com.guuidea.component.chrome.tool.common.Constant.EMPTY_STR;
 import com.guuidea.component.chrome.tool.common.AesCipher;
 import com.guuidea.component.chrome.tool.common.AlertUtils;
 import com.guuidea.component.chrome.tool.common.StringUtils;
-import com.guuidea.component.chrome.tool.common.UUIDUtils;
 import com.guuidea.component.chrome.tool.model.GoogleAccount;
 import com.guuidea.component.chrome.tool.model.ProxyAccount;
 import com.guuidea.component.chrome.tool.service.GoogleStoreDB;
 import com.guuidea.component.chrome.tool.service.ProxyStoreDB;
+import com.guuidea.component.utils.UUIDUtils;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

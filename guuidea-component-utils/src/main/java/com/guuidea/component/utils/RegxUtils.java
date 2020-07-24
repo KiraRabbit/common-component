@@ -1,4 +1,4 @@
-package com.guuidea.component.docker.utils;
+package com.guuidea.component.utils;
 
 import java.util.regex.Pattern;
 

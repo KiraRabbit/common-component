@@ -1,7 +1,7 @@
 
 package com.guuidea.component.chrome.tool.common;
 
-import static com.guuidea.component.chrome.tool.common.AESUtils.KEY_ALGORITHM;
+import static com.guuidea.component.utils.AESUtils.KEY_ALGORITHM;
 
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -9,6 +9,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Base64;
+
+import com.guuidea.component.utils.AESUtils;
 
 
 /**

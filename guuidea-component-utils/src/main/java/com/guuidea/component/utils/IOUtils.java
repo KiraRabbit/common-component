@@ -1,11 +1,12 @@
-package com.guuidea.component.docker.utils;
+package com.guuidea.component.utils;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Base64;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+
+import sun.misc.BASE64Encoder;
 
 /**
  * IO工具类.
@@ -30,7 +31,7 @@ public class IOUtils {
             int size = inputStream.available();
             byte[] bytes = new byte[size];
             inputStream.read(bytes);
-            return Base64.getEncoder().encodeToString(bytes);
+            return Base64.encodeBase64String(bytes);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -47,7 +48,8 @@ public class IOUtils {
         if (StringUtils.isBlank(text)) {
             return null;
         }
-        byte[] bytes = Base64.getDecoder().decode(text);
+
+        byte[] bytes = Base64.decodeBase64(text);
         InputStream stream = new ByteArrayInputStream(bytes);
         return stream;
     }

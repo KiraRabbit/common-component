@@ -1,4 +1,4 @@
-package com.guuidea.component.log.utils;
+package com.guuidea.component.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

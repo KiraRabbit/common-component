@@ -35,6 +35,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- 自建工具类 -->
+        <dependency>
+            <groupId>com.guuidea.component</groupId>
+            <artifactId>utils</artifactId>
+            <version>${guuidea.component.utils.version}</version>
+        </dependency>
+
 
         <!--okhttp retrofit http connect jar-->
         <dependency>
