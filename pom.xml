@@ -16,6 +16,7 @@
         <module>guuidea-component-rate-limit</module>
         <module>guuidea-component-chrome-tool</module>
         <module>guuidea-component-utils</module>
+        <module>guuidea-componet-encrypt</module>
     </modules>
 
     <properties>
