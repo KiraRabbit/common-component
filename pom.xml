@@ -27,6 +27,7 @@
         <guuidea.component.rate-limit.version>1.0.0-SNAPSHOT</guuidea.component.rate-limit.version>
         <guuidea.component.chrome-tool.version>1.0.0-SNAPSHOT</guuidea.component.chrome-tool.version>
         <guuidea.component.utils.version>1.0.0-SNAPSHOT</guuidea.component.utils.version>
+        <guuidea.component.encrypt.version>1.0.0-SNAPSHOT</guuidea.component.encrypt.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>

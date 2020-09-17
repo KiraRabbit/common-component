@@ -39,6 +39,7 @@ public class SecurityEncryption {
         return generateSalt(16);
     }
 
+
     /**
      * 生成salt
      *
