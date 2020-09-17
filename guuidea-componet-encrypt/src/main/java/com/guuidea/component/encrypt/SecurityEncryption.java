@@ -223,7 +223,6 @@ public class SecurityEncryption {
 
     public static void main(String[] args) throws IOException {
 
-
         // 明文
         String text = "123456";
         // 获取加盐后的MD5值
