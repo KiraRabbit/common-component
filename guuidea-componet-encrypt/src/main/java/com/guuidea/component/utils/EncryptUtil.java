@@ -5,6 +5,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class EncryptUtil {
+
+
+
     /**
      * md5和sha-1混合加密
      *

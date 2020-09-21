@@ -1,14 +1,17 @@
 package com.guuidea.component.encrypt;
 
 
-
+import com.guuidea.component.common.DataMaskingConstants;
+import com.guuidea.component.utils.Base64Util;
 import com.guuidea.component.utils.EncryptUtil;
 import com.guuidea.component.utils.MD5Helper;
-import com.guuidea.component.utils.Base64Util;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /*
@@ -69,7 +72,7 @@ public class SecurityEncryption {
      * @param salt 盐
      * @return String 摘要
      */
-    public static String generateDigest(String text,String salt) {
+    public static String generateDigest(String text, String salt) {
 
         // 生成最终的加密盐
         text = EncryptUtil.md5AndSha(text + salt);
@@ -122,10 +125,10 @@ public class SecurityEncryption {
      * 生成摘要
      *
      * @param bytes 字节流
-     * @param salt 盐
+     * @param salt  盐
      * @return String 摘要
      */
-    public static byte[] generateDigestOfBytes(byte[] bytes,String salt) {
+    public static byte[] generateDigestOfBytes(byte[] bytes, String salt) {
         String text = new String(bytes, Charset.forName("UTF-8"));
         text = EncryptUtil.md5AndSha(text + salt);
         char[] cs = new char[48];
@@ -141,35 +144,38 @@ public class SecurityEncryption {
 
     /**
      * 加密文本：bitEncode + base64
+     *
      * @param bytes 明文（明文）
      * @return 密文（密文）
      */
-    static byte[] encryptStream(byte[] bytes){
-        int len,i;
+    static byte[] encryptStream(byte[] bytes) {
+        int len, i;
         byte[] wen;
-        len=bytes.length;
+        len = bytes.length;
         wen = new byte[len];
-        for(i=0; i<len; i++){
-            wen[i] = (byte) (bytes[i]^ENCRYPT_VAL[i % ENCRYPT_VAL.length]);
+        for (i = 0; i < len; i++) {
+            wen[i] = (byte) (bytes[i] ^ ENCRYPT_VAL[i % ENCRYPT_VAL.length]);
         }
         return wen;
     }
 
     /**
      * 加密文本：bitEncode + base64
+     *
      * @param bytes 明文（密文）
      * @return 密文（明文）
      */
-    static byte[] dencryptStream(byte[] bytes){
+    static byte[] dencryptStream(byte[] bytes) {
         return encryptStream(bytes);
     }
 
     /**
      * 加密文本：bitEncode + base64
+     *
      * @param str 明文（明文）
      * @return 密文（密文）
      */
-    static String encryptText(String str){
+    static String encryptText(String str) {
         byte[] bytes = str.getBytes();
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) (bytes[i] ^ ENCRYPT_VAL[i % ENCRYPT_VAL.length]);
@@ -179,10 +185,11 @@ public class SecurityEncryption {
 
     /**
      * 解密文本：bitEncode + base64
+     *
      * @param str 明文（密文）
      * @return 密文（明文）
      */
-    static String decryptText(String str){
+    static String decryptText(String str) {
         byte[] bytes = new byte[0];
         try {
             bytes = Base64Util.decodeString(str);
@@ -220,8 +227,140 @@ public class SecurityEncryption {
     }
 
 
+    public static Object dateMask(String data, String dataType) {
+        String encryptText = "";
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            switch (dataType) {
+                case DataMaskingConstants.ID_CARD_NUMBER:
+                    if (data.length() == 15) {
+                        encryptText = encryptText(data);
+                        data = data.replaceAll("(\\w{6})\\w*(\\w{3})", "$1******$2");
+                    }
+                    if (data.length() == 18) {
+                        encryptText = encryptText(data);
+                        data = data.replaceAll("(\\w{6})\\w*(\\w{3})", "$1*********$2");
+                    }
+                    break;
+                case DataMaskingConstants.PHONE_NUMBER:
+                    if (data.length() == 11) {
+                        encryptText = encryptText(data);
+                        data = data.replaceAll("(\\d{3})\\d{4}(\\d{4})", "$1****$2");
+                    }
+                    break;
+                case DataMaskingConstants.BANK_CARD_NUMBER:
+                    encryptText = encryptText(data);
+
+                    if (data == null) {
+                        return "";
+                    }
+                    data = replaceBetween(data, 6, data.length() - 4, null);
+                    break;
+                case DataMaskingConstants.EMAIL:
+                    encryptText = encryptText(data);
+                    data = data.replaceAll("(^\\w)[^@]*(@.*$)", "$1****$2");
+                    break;
+
+            }
+            result.put("code", 200);
+            result.put("dataMasking", data);
+            result.put("encrypt", encryptText);
+        } catch (Exception e) {
+            result.put("code", 400);
+            result.put("dataMasking", data);
+            result.put("encrypt", "error");
+        }
+
+
+        return result;
+
+    }
+
+
+    /**
+     * 将字符串开始位置到结束位置之间的字符用指定字符替换
+     *
+     * @param data  待处理字符串
+     * @param begin 开始位置
+     * @param end   结束位置
+     * @return Object
+     */
+    public static Object dateMask(String data, Integer begin, Integer end) {
+        Map<String, Object> result = new HashMap<>();
+
+        if (end < begin) {
+            result.put("code", 400);
+            result.put("msg", "脱敏异常");
+            return result;
+        }
+        String dataMasking = replaceBetween(data, begin, end, "*");
+        String encrypt = encryptText(data);
+        result.put("code", 200);
+        result.put("dataMasking", dataMasking);
+        result.put("encrypt", encrypt);
+        return result;
+
+    }
+
+
+    /**
+     * 将字符串开始位置到结束位置之间的字符用指定字符替换
+     *
+     * @param sourceStr   待处理字符串
+     * @param begin       开始位置
+     * @param end         结束位置
+     * @param replacement 替换字符
+     * @return
+     */
+    private static String replaceBetween(String sourceStr, int begin, int end, String replacement) {
+        if (sourceStr == null) {
+            return "";
+        }
+        if (replacement == null) {
+            replacement = "*";
+        }
+        int replaceLength = end - begin;
+        if (StringUtils.isNotBlank(sourceStr) && replaceLength > 0) {
+            StringBuilder sb = new StringBuilder(sourceStr);
+            sb.replace(begin, end, StringUtils.repeat(replacement, replaceLength));
+            return sb.toString();
+        } else {
+            return sourceStr;
+        }
+    }
+
+
+    public static void test() {
+        System.out.println("身份证脱敏");
+        Map<String, String> id_card_number = (Map<String, String>) dateMask("340111119606060026", "id_card_number");
+        System.out.println(id_card_number);
+        System.out.println("身份证解密 : " + decryptText(id_card_number.get("encrypt")));
+
+
+        System.out.println("手机号脱敏");
+        Map<String, String> phone_number = (Map<String, String>) dateMask("17621205270", "phone_number");
+        System.out.println(dateMask("17621205270", "phone_number"));
+        System.out.println("手机号解密 : " + decryptText(phone_number.get("encrypt")));
+
+
+        System.out.println("银行卡脱敏");
+        Map<String, String> bank_card_number = (Map<String, String>) dateMask("6223123456781230", "bank_card_number");
+        System.out.println(bank_card_number);
+        System.out.println("银行卡解密 : " + decryptText(bank_card_number.get("encrypt")));
+
+
+        System.out.println("邮箱脱敏");
+        Map<String, String> email = (Map<String, String>) dateMask("2231876567@qq.com", "email");
+        System.out.println(email);
+        System.out.println("邮箱解密 : " + decryptText(email.get("encrypt")));
+    }
+
 
     public static void main(String[] args) throws IOException {
+        System.out.println(dateMask("dsadsadsadsada", 2, 1));
+        test();
+
 
         // 明文
         String text = "123456";
@@ -256,16 +395,16 @@ public class SecurityEncryption {
         System.out.println(generateDigestOfBytes(data));
 
         System.out.println("-------------------------------");
-        String str,miwen,jiemi;
+        String str, miwen, jiemi;
         int i;
         char n;
         String go;
         System.out.println("位加密解密算法演示！");
         Scanner input = new Scanner(System.in);
-        do{
+        do {
             System.out.print("请输入明文：");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            str=br.readLine();
+            str = br.readLine();
             System.out.print("明文为：");
             System.out.print(str);
             System.out.println();
@@ -273,7 +412,7 @@ public class SecurityEncryption {
             long start1 = System.currentTimeMillis();
 
             System.out.println(start1);
-            miwen=encryptText(str);
+            miwen = encryptText(str);
             System.out.println("耗时：" + (System.currentTimeMillis() - start1));
 
             System.out.print("密文为：");
@@ -281,14 +420,14 @@ public class SecurityEncryption {
             System.out.println();
 
 
-            jiemi= decryptText(miwen);
+            jiemi = decryptText(miwen);
             System.out.print("解密为：");
             System.out.print(jiemi);
             System.out.println();
 
             System.out.print("是否继续(y/n):");
             go = input.next();
-        }while(go.equalsIgnoreCase("y"));
+        } while (go.equalsIgnoreCase("y"));
         System.out.println("退出程序！");
 
     }
