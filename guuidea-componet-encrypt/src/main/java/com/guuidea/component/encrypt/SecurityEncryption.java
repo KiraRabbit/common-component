@@ -94,7 +94,8 @@ public class SecurityEncryption {
      * @param text 文本
      * @return String 摘要
      */
-    public static String generateDigest(String text) {
+    //todo  delete
+    private static String generateDigest(String text) {
         String salt = generateSalt();
         text = EncryptUtil.md5AndSha(text + salt);
 
@@ -115,6 +116,7 @@ public class SecurityEncryption {
      * @param bytes 字节流
      * @return String 摘要
      */
+
     public static String generateDigestOfBytes(byte[] bytes) {
         String text = new String(bytes, Charset.forName("UTF-8"));
         String salt = generateSalt();
@@ -210,7 +212,7 @@ public class SecurityEncryption {
      * @param md5str 密文
      * @return boolean true表示一致   false表示不一致
      */
-    public static boolean isVerify(String text, String md5str) {
+    private static boolean verifyDigest(String text, String md5str) {
         char[] cs1 = new char[32];
         char[] cs2 = new char[16];
         for (int i = 0; i < 48; i += 3) {
@@ -226,8 +228,14 @@ public class SecurityEncryption {
         return encryptText.equals(String.valueOf(cs1));
     }
 
-
-    public static Object dateMask(String data, String dataType) {
+    /**
+     * 脱敏
+     *
+     * @param data     明文
+     * @param dataType 脱敏类型
+     * @return Object code:200(成功) code:400(失败)   encrypt:密文 dataMasking:脱敏数据
+     */
+    public static Object dataMask(String data, String dataType) {
         String encryptText = "";
         Map<String, Object> result = new HashMap<>();
 
@@ -261,18 +269,25 @@ public class SecurityEncryption {
                     encryptText = encryptText(data);
                     data = data.replaceAll("(^\\w)[^@]*(@.*$)", "$1****$2");
                     break;
+                default:
+                    if (data.length() > 3) {
+                        encryptText = encryptText(data);
+                        data = replaceBetween(data, 3, data.length() - 1, null);
+                    } else {
+                        result.put("code", 400);
+                        result.put("encrypt", "error");
+                    }
+                    break;
 
             }
             result.put("code", 200);
-            result.put("dataMasking", data);
             result.put("encrypt", encryptText);
         } catch (Exception e) {
             result.put("code", 400);
-            result.put("dataMasking", data);
             result.put("encrypt", "error");
         }
 
-
+        result.put("dataMasking", data);
         return result;
 
     }
@@ -286,19 +301,61 @@ public class SecurityEncryption {
      * @param end   结束位置
      * @return Object
      */
-    public static Object dateMask(String data, Integer begin, Integer end) {
+    //todo 3.自定义脱敏 4. 自定义码表
+    public static Object dataMask(String data, Integer begin, Integer end) {
         Map<String, Object> result = new HashMap<>();
 
-        if (end < begin) {
-            result.put("code", 400);
-            result.put("msg", "脱敏异常");
+        if (begin <= end && data.length() > end) {
+            String dataMasking = replaceBetween(data, begin, end, "*");
+            String encrypt = encryptText(data);
+            result.put("code", 200);
+            result.put("dataMasking", dataMasking);
+            result.put("encrypt", encrypt);
             return result;
         }
-        String dataMasking = replaceBetween(data, begin, end, "*");
-        String encrypt = encryptText(data);
+        result.put("code", 400);
+        result.put("msg", "脱敏异常");
+        return result;
+    }
+
+    /**
+     * 脱敏
+     *
+     * @param data 明文
+     * @return Object 成功:code=200 失败:code=400 dataMasking 脱敏数据 encrypt 密文
+     */
+    public static Object dataMask(String data) {
+        Map<String, Object> result = new HashMap<>();
+        if (data.length()>3){
+            String encryptText = encryptText(data);
+            data = replaceBetween(data, 3, data.length() - 1, null);
+            result.put("code", 200);
+            result.put("dataMasking", data);
+            result.put("encrypt", encryptText);
+            return result;
+        }
+
+        result.put("code", 400);
+        result.put("msg", "脱敏异常");
+        result.put("dataMasking", data);
+        return result;
+    }
+
+    /**
+     * 反脱敏
+     *
+     * @param data 密文
+     * @return Object 成功:code=200 失败:code=400 decrypt 反脱敏明文
+     */
+    public static Object undoDataMask(String data) {
+        Map<String, Object> result = new HashMap<>();
+        if (data == null) {
+            result.put("code", 400);
+            return result;
+        }
+        String decryptData = decryptText(data);
         result.put("code", 200);
-        result.put("dataMasking", dataMasking);
-        result.put("encrypt", encrypt);
+        result.put("decrypt", decryptData);
         return result;
 
     }
@@ -313,7 +370,7 @@ public class SecurityEncryption {
      * @param replacement 替换字符
      * @return
      */
-    private static String replaceBetween(String sourceStr, int begin, int end, String replacement) {
+    private static String replaceBetween(String sourceStr, Integer begin, Integer end, String replacement) {
         if (sourceStr == null) {
             return "";
         }
@@ -331,43 +388,34 @@ public class SecurityEncryption {
     }
 
 
-    public static void test() {
-        System.out.println("身份证脱敏");
-        Map<String, String> id_card_number = (Map<String, String>) dateMask("340111119606060026", "id_card_number");
-        System.out.println(id_card_number);
+    private static void test() {
+        Map<String, String> id_card_number = (Map<String, String>) dataMask("340111119606060026", "id_card_number");
+        System.out.println("身份证脱敏 : "+id_card_number);
         System.out.println("身份证解密 : " + decryptText(id_card_number.get("encrypt")));
 
 
-        System.out.println("手机号脱敏");
-        Map<String, String> phone_number = (Map<String, String>) dateMask("17621205270", "phone_number");
-        System.out.println(dateMask("17621205270", "phone_number"));
+        Map<String, String> phone_number = (Map<String, String>) dataMask("17621205270", "phone_number");
+        System.out.println("手机号脱敏 : " +dataMask("17621205270", "phone_number"));
         System.out.println("手机号解密 : " + decryptText(phone_number.get("encrypt")));
 
 
-        System.out.println("银行卡脱敏");
-        Map<String, String> bank_card_number = (Map<String, String>) dateMask("6223123456781230", "bank_card_number");
-        System.out.println(bank_card_number);
+        Map<String, String> bank_card_number = (Map<String, String>) dataMask("6223123456781230", "bank_card_number");
+        System.out.println("银行卡脱敏 : " +bank_card_number);
         System.out.println("银行卡解密 : " + decryptText(bank_card_number.get("encrypt")));
 
 
-        System.out.println("邮箱脱敏");
-        Map<String, String> email = (Map<String, String>) dateMask("2231876567@qq.com", "email");
-        System.out.println(email);
+        Map<String, String> email = (Map<String, String>) dataMask("2231876567@qq.com", "email");
+        System.out.println("邮箱脱敏 : "+email);
         System.out.println("邮箱解密 : " + decryptText(email.get("encrypt")));
     }
 
-
-    public static void main(String[] args) throws IOException {
-        System.out.println(dateMask("dsadsadsadsada", 2, 1));
-        test();
-
-
+    private static void test2() throws IOException {
         // 明文
         String text = "123456";
         // 获取加盐后的MD5值
         String ciphertext = generateDigest(text);
         System.out.println("加盐后MD5：" + ciphertext);
-        System.out.println("是否是同一字符串:" + isVerify(text, ciphertext));
+        System.out.println("是否是同一字符串:" + verifyDigest(text, ciphertext));
 
 
         System.out.println("文件流加密");
@@ -429,7 +477,16 @@ public class SecurityEncryption {
             go = input.next();
         } while (go.equalsIgnoreCase("y"));
         System.out.println("退出程序！");
+    }
 
+
+    public static void main(String[] args) throws IOException {
+
+        System.out.println(dataMask("1222"));
+        Map<String, Object> map = (Map<String, Object>) dataMask("1222");
+        System.out.println(undoDataMask((String) map.get("encrypt")));
+        System.out.println(dataMask("dsadsadsadsada", 1, 4));
+        test();
     }
 
 }
