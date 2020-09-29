@@ -10,9 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.guuidea.component.constants.CodeConstant.ENCRYPT_VAL;
 
 /*
  * 摘要、文本加解密、流加解密
@@ -22,16 +27,24 @@ import java.util.Scanner;
  */
 public class SecurityEncryption {
 
+    public static byte[] getEncryptVal() {
+        return ENCRYPT_VAL;
+    }
+
+    public static void setEncryptVal(byte[] encryptVal) {
+        ENCRYPT_VAL = encryptVal;
+    }
+
     /**
-     * 异或位加密向量维护
+     * 随机生成 byte[]  40位长度
+     *
+     * @return byte[]
      */
-    private final static byte[] ENCRYPT_VAL = {
-            25, 69, 54, 52, 65, 53, 69, 99,
-            52, 56, 27, 33, 31, 56, 56, 69,
-            38, 48, 70, 55, 70, 50, 49, 51,
-            65, 52, 77, 69, 54, 65, 54, 26,
-            35, 52, 88, 22, 54, 11, 56, 40
-    };
+    public static byte[] generateBytes() {
+        byte[] nonce = new byte[40];
+        new SecureRandom().nextBytes(nonce);
+        return nonce;
+    }
 
     /**
      * 生成salt 默认16位长度
@@ -94,7 +107,6 @@ public class SecurityEncryption {
      * @param text 文本
      * @return String 摘要
      */
-    //todo  delete
     private static String generateDigest(String text) {
         String salt = generateSalt();
         text = EncryptUtil.md5AndSha(text + salt);
@@ -229,7 +241,12 @@ public class SecurityEncryption {
     }
 
     /**
-     * 脱敏
+     * 根据类型脱敏.
+     * dataType目前支持下几类:
+     * 身份证:     "id_card_number";    15位或18位
+     * 手机号:     "phone_number";      11位
+     * 银行卡卡号   "bank_card_number";  鉴于各个银行的卡号长度可能存在不一样,目前校验长度10位,直接脱敏data
+     * 邮箱         "email";             邮箱检验,保留邮箱第1,2个及@前 最后一个字母
      *
      * @param data     明文
      * @param dataType 脱敏类型
@@ -238,7 +255,11 @@ public class SecurityEncryption {
     public static Object dataMask(String data, String dataType) {
         String encryptText = "";
         Map<String, Object> result = new HashMap<>();
-
+        if (data == null) {
+            result.put("code", 400);
+            result.put("encrypt", "error");
+            return result;
+        }
         try {
             switch (dataType) {
                 case DataMaskingConstants.ID_CARD_NUMBER:
@@ -258,14 +279,23 @@ public class SecurityEncryption {
                     }
                     break;
                 case DataMaskingConstants.BANK_CARD_NUMBER:
+                    if (data.length() < 10) {
+                        result.put("code", 400);
+                        result.put("encrypt", "error");
+                        break;
+                    }
                     encryptText = encryptText(data);
 
-                    if (data == null) {
-                        return "";
-                    }
                     data = replaceBetween(data, 6, data.length() - 4, null);
                     break;
                 case DataMaskingConstants.EMAIL:
+                    String emailRegEx = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+                    Pattern p = Pattern.compile(emailRegEx);
+                    Matcher m = p.matcher(data);
+                    if (!m.matches()) {
+                        result.put("code", 400);
+                        result.put("encrypt", "not a email !");
+                    }
                     encryptText = encryptText(data);
                     data = data.replaceAll("(^\\w)[^@]*(@.*$)", "$1****$2");
                     break;
@@ -294,14 +324,13 @@ public class SecurityEncryption {
 
 
     /**
-     * 将字符串开始位置到结束位置之间的字符用指定字符替换
+     * 指定位置脱敏,脱敏将字符串开始位置到结束位置之间的字符用指定字符替换
      *
      * @param data  待处理字符串
      * @param begin 开始位置
      * @param end   结束位置
      * @return Object
      */
-    //todo 3.自定义脱敏 4. 自定义码表
     public static Object dataMask(String data, Integer begin, Integer end) {
         Map<String, Object> result = new HashMap<>();
 
@@ -319,14 +348,17 @@ public class SecurityEncryption {
     }
 
     /**
-     * 脱敏
+     * 脱敏,data长度小于等于3位,将返回400,脱敏异常
+     * data长度大于3位,默认会从下标3开始脱敏
+     * eg:dsadsadsadsada     脱敏后:dsa**********a
+     * 返回:{code=200, dataMasking=dsa**********a, encrypt=fTZXUDJUIRBVXGhAe1k=}
      *
      * @param data 明文
      * @return Object 成功:code=200 失败:code=400 dataMasking 脱敏数据 encrypt 密文
      */
     public static Object dataMask(String data) {
         Map<String, Object> result = new HashMap<>();
-        if (data.length()>3){
+        if (data.length() > 3) {
             String encryptText = encryptText(data);
             data = replaceBetween(data, 3, data.length() - 1, null);
             result.put("code", 200);
@@ -342,12 +374,13 @@ public class SecurityEncryption {
     }
 
     /**
-     * 反脱敏
+     * 反脱敏,根据传入密文进行反脱敏
      *
      * @param data 密文
      * @return Object 成功:code=200 失败:code=400 decrypt 反脱敏明文
      */
-    public static Object undoDataMask(String data) {
+
+    public static Object antiDataMask(String data) {
         Map<String, Object> result = new HashMap<>();
         if (data == null) {
             result.put("code", 400);
@@ -390,22 +423,22 @@ public class SecurityEncryption {
 
     private static void test() {
         Map<String, String> id_card_number = (Map<String, String>) dataMask("340111119606060026", "id_card_number");
-        System.out.println("身份证脱敏 : "+id_card_number);
+        System.out.println("身份证脱敏 : " + id_card_number);
         System.out.println("身份证解密 : " + decryptText(id_card_number.get("encrypt")));
 
 
         Map<String, String> phone_number = (Map<String, String>) dataMask("17621205270", "phone_number");
-        System.out.println("手机号脱敏 : " +dataMask("17621205270", "phone_number"));
+        System.out.println("手机号脱敏 : " + dataMask("17621205270", "phone_number"));
         System.out.println("手机号解密 : " + decryptText(phone_number.get("encrypt")));
 
 
         Map<String, String> bank_card_number = (Map<String, String>) dataMask("6223123456781230", "bank_card_number");
-        System.out.println("银行卡脱敏 : " +bank_card_number);
+        System.out.println("银行卡脱敏 : " + bank_card_number);
         System.out.println("银行卡解密 : " + decryptText(bank_card_number.get("encrypt")));
 
 
         Map<String, String> email = (Map<String, String>) dataMask("2231876567@qq.com", "email");
-        System.out.println("邮箱脱敏 : "+email);
+        System.out.println("邮箱脱敏 : " + email);
         System.out.println("邮箱解密 : " + decryptText(email.get("encrypt")));
     }
 
@@ -484,9 +517,8 @@ public class SecurityEncryption {
 
         System.out.println(dataMask("1222"));
         Map<String, Object> map = (Map<String, Object>) dataMask("1222");
-        System.out.println(undoDataMask((String) map.get("encrypt")));
-        System.out.println(dataMask("dsadsadsadsada", 1, 4));
-        test();
+        System.out.println(antiDataMask((String) map.get("encrypt")));
+        System.out.println(dataMask("dsadsadsadsada"));
     }
 
 }
